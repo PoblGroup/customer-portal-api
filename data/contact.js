@@ -111,8 +111,42 @@ const UpdateContact = async (token, newContactDetails) => {
     return updated
 }
 
+const CreateContactPreference = async (token, newPreference, contactId) => {
+    let created = false
+
+    var data = {
+        pobl_communicationschannel: newPreference.channel,
+        pobl_preference: newPreference.preference,
+        pobl_effectivedate: newPreference.effectiveDate,
+        "pobl_Contact@odata.bind": "/contacts(" + contactId + ")" 
+    };
+
+    var config = {
+        method: "post",
+        url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_contactpreferences`,
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        data: JSON.stringify(data),
+    };
+
+    await axios(config)
+        .then(function (response) {
+            if (response.status == 204) created = true;
+        })
+        .catch(function (error) {
+            console.log(error.response.status, error.response.statusText);
+            created = false
+        });
+
+    return created
+}
+
 module.exports = {
     GetAllContacts,
     GetContactByID, 
-    UpdateContact
+    UpdateContact,
+    CreateContactPreference
 }

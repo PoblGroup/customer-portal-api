@@ -1,4 +1,4 @@
-const { GetAllContacts, GetContactByID, UpdateContact } = require("../data/contact")
+const { GetAllContacts, GetContactByID, UpdateContact, CreateContactPreference } = require("../data/contact")
 const { GetDynamicsToken } = require("../utils/dynamicsAuth")
 const { FormatTelephoneNumber } = require("../utils/formatTelehone")
 
@@ -29,9 +29,9 @@ const getSingleContact = async (req, res) => {
 }
 
 const updateContact = async (req, res) => {
-    // TODO: Validate form data - telephone?
+    const id = req.params.id
     let newContactDetails = {
-        id: req.body.id,
+        id,
         title: req.body.title,
         dob: req.body.dob,
         tel1: FormatTelephoneNumber(req.body.tel1),
@@ -76,6 +76,31 @@ const removeContact = async (req, res) => {
     res.send('Remove Contact')
 }
 
+const newContactPreference = async (req, res) => {
+    const id = req.params.id
+    const { channel, preference, effectiveDate } = req.body
+    const { access_token } = await GetDynamicsToken()
+
+    let newPreference = {
+        channel, 
+        preference, 
+        effectiveDate
+    }
+
+    try {
+        const createdPreference = await CreateContactPreference(access_token, newPreference, id) 
+        
+        if(!createdPreference)
+            return res.status(500).json({ error: 'Something went wrong' })
+        
+        return res.status(201).json({
+            data: newPreference,
+            message: 'New Preference Added!'
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 module.exports = {
     getContacts,
@@ -83,4 +108,5 @@ module.exports = {
     updateContact,
     newContact,
     removeContact,
+    newContactPreference
 }
