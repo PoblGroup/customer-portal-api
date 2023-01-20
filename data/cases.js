@@ -225,14 +225,14 @@ const GetGeneralEnquries = async (token, contactId) => {
     return data;
 }
 
-const NewGeneralEnquiry = async (token, newPermissionRequest) => {
+const NewGeneralEnquiry = async (token, newGeneralEnquiry) => {
     let created = false
 
     var data = {
-        pobl_type: '771570005',
-        subject: 'Customer Portal Enquiry',
-        description: 'I\'d like to know more :)',
-        "regardingobjectid_account@odata.bind": "/accounts(adb42a18-c4ee-eb11-94ef-000d3a8745fa)",
+        pobl_type: newGeneralEnquiry.type,
+        subject: newGeneralEnquiry.subject,
+        description: newGeneralEnquiry.description,
+        "regardingobjectid_contact@odata.bind": "/contacts("+ newGeneralEnquiry.contactId +")",
     };
 
     var config = {

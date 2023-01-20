@@ -75,20 +75,17 @@ const newAsb = async (req, res) => {
 
 const newGeneralEnquiry = async (req, res) => {
     const { access_token } = await GetDynamicsToken()
-    // const { requestType, requestOther, detail, requestDate, accountId, contractId, contactId } = req.body
+    const { type, subject, description, contactId } = req.body
 
-    // let newPermissionRequest = {
-    //     requestType,
-    //     requestOther,
-    //     detail,
-    //     requestDate,
-    //     accountId,
-    //     contractId,
-    //     contactId
-    // }
+    let newGeneralEnquiry = {
+        type,
+        subject,
+        description,
+        contactId
+    }
 
     try {
-        const updated = await NewGeneralEnquiry(access_token, newPermissionRequest)
+        const updated = await NewGeneralEnquiry(access_token, newGeneralEnquiry)
         if(updated) return res.status(200).json({ message: 'New General Enquiry Added' })
     } catch (error) {
         console.log(error)
