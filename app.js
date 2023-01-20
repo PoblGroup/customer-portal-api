@@ -9,7 +9,8 @@ const cors = require('cors')
 const contactRoutes = require('./routes/contactRoutes')
 const accountRoutes = require('./routes/accountRoutes')
 const occupancyRoutes = require('./routes/occupancyRoutes')
-const propertyRoutes = require('./routes/propertyRoutes')
+const propertyRoutes = require('./routes/propertyRoutes');
+const caseRoutes = require('./routes/caseRoutes');
 
 // Config File
 dotenv.config()
@@ -34,6 +35,7 @@ app.use('/api/contacts', contactRoutes.routes)
 app.use('/api/accounts', accountRoutes.routes)
 app.use('/api/occupancies', occupancyRoutes.routes)
 app.use('/api/properties', propertyRoutes.routes)
+app.use('/api/cases', caseRoutes.routes)
 
 router.get("/", function (req, res) {
   const __dirname = path.resolve();
