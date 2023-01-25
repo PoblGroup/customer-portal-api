@@ -1,0 +1,23 @@
+[
+    {
+        "id": "1",
+        "username": "Rich",
+        "email": "rich.griffiths@poblgroup.co.uk",
+        "fullname": "Richard Griffiths",
+        "accountId": "00000000000000"
+    },
+    {
+        "id": "2",
+        "username": "James",
+        "email": "james.polak@poblgroup.co.uk",
+        "fullname": "James Polak",
+        "accountId": "00000000000000"
+    },
+    {
+        "id": "3",
+        "username": "Liam",
+        "email": "liam.moseley@poblgroup.co.uk",
+        "fullname": "Liam Moseley",
+        "accountId": "00000000000000"
+    }
+]

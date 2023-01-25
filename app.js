@@ -11,6 +11,7 @@ const accountRoutes = require('./routes/accountRoutes')
 const occupancyRoutes = require('./routes/occupancyRoutes')
 const propertyRoutes = require('./routes/propertyRoutes');
 const caseRoutes = require('./routes/caseRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 // Config File
 dotenv.config()
@@ -36,6 +37,7 @@ app.use('/api/accounts', accountRoutes.routes)
 app.use('/api/occupancies', occupancyRoutes.routes)
 app.use('/api/properties', propertyRoutes.routes)
 app.use('/api/cases', caseRoutes.routes)
+app.use('/api/users', userRoutes.routes)
 
 router.get("/", function (req, res) {
   const __dirname = path.resolve();
