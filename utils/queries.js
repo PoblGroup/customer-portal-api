@@ -70,9 +70,89 @@ const propertyCertificates = propertyId => {
     </fetch>`
 }
 
+const periodTransactions = (occupancyId, start, end) => {
+    return `
+        <fetch>
+            <entity name="pobl_debitperiodsummary" >
+                <attribute name="pobl_contract_closingbal" />
+                <attribute name="pobl_periodenddate" />
+                <attribute name="pobl_perioddebitvalue" />
+                <attribute name="pobl_periodstartdate" />
+                <attribute name="pobl_periodcreditvalue" />
+                <attribute name="pobl_debitperiodsummaryid" />
+                <filter>
+                    <condition attribute="pobl_debtperiodcontractid" operator="eq" value="${occupancyId}" />
+                </filter>
+
+                ${(start && end) ? `
+                <filter>
+                    <condition attribute="pobl_periodstartdate" operator="gt" value="{{start}}" />
+                    <condition attribute="pobl_periodstartdate" operator="lt" value="{{end}}" />
+                </filter>` 
+                : null}
+
+                <order attribute="pobl_periodstartdate" descending="true" />
+                <link-entity name="pobl_transaction" from="pobl_debitperiodid" to="pobl_debitperiodsummaryid" alias="t" >
+                    <attribute name="pobl_transactionnarrative" />
+                    <attribute name="pobl_transactionvalue" />
+                    <attribute name="pobl_contractbal" />
+                    <attribute name="pobl_transactiontype" />
+                    <attribute name="createdon" />
+                    <order attribute="createdon" descending="true" />
+                </link-entity>
+            </entity>
+        </fetch>
+    `
+}
+
+const adhocCharges = occupancyId => {
+    return `
+    <fetch version="1.0" output-format="xml-platform" mapping="logical" distinct="false">
+        <entity name="pobl_adhoccharge">
+            <attribute name="pobl_adhocchargeid" />
+            <attribute name="pobl_name" />
+            <attribute name="pobl_adhocchargeref" />
+            <attribute name="pobl_adhocchargevalue" />
+            <attribute name="pobl_adhocchargetype" />
+            <attribute name="pobl_adhocstage" />
+            <attribute name="createdon" />
+            <order attribute="pobl_name" descending="false" />
+            <filter type="and">
+            <condition attribute="pobl_contractid" operator="eq" uitype="pobl_occupancycontract" value="${occupancyId}" />
+            </filter>
+        </entity>
+    </fetch>
+    `
+}
+
+const recurringCharges = occupancyId => {
+    return `
+    <fetch version="1.0" output-format="xml-platform" mapping="logical" distinct="false">
+        <entity name="pobl_recurringcharge">
+            <attribute name="pobl_recurringchargeid" />
+            <attribute name="pobl_recurringchargevalue" />
+            <attribute name="pobl_recurringchargeref" />
+            <attribute name="pobl_name" />
+            <attribute name="pobl_recurringchargestartdate" />
+            <attribute name="pobl_recurringchargeenddate" />
+            <attribute name="pobl_recurringchargenextbillingdate" />
+            <attribute name="createdon" />
+            <order attribute="pobl_name" descending="false" />
+            <filter type="and">
+            <condition attribute="pobl_contractid" operator="eq" uitype="pobl_occupancycontract" value="${occupancyId}" />
+            </filter>
+        </entity>
+    </fetch>
+    `
+}
+
+
 module.exports = { 
     occupiersAdditional, 
     occupiersResponsible,
     propertyHazards,
     propertyCertificates,
+    periodTransactions,
+    adhocCharges,
+    recurringCharges
 }
