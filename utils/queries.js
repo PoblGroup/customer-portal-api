@@ -146,6 +146,235 @@ const recurringCharges = occupancyId => {
     `
 }
 
+const maintenanceTemplates = item => {
+    return `
+    <fetch>
+        <entity name="pobl_mainttemplatecase" >
+            <attribute name="pobl_mainttemplatecaseid" />
+            <attribute name="pobl_maintcasetemplatename" />
+            <attribute name="pobl_maintcasetemplateportaldescription" />
+            <attribute name="pobl_maintcasetemplateservicecharged" />
+            <attribute name="pobl_maintcasetemplaterecharge" />
+            <attribute name="pobl_maintcasetemplateshowonportal" />
+            <attribute name="pobl_locationinhome" />
+            <attribute name="pobl_problemitem" />
+            <attribute name="pobl_worktypeid" />
+            <attribute name="pobl_priority" />
+            <attribute name="pobl_slaid" />
+            <attribute name="pobl_description" />
+            <attribute name="pobl_contractid" />
+            <attribute name="pobl_costcentreid" />
+            <attribute name="pobl_activitycodeid" />
+            <attribute name="pobl_vatcodeid" />
+            <filter>
+                <condition attribute="pobl_problemitemname" operator="eq" value="${item}" />
+            </filter>
+            <link-entity name="pobl_maintworktype" from="pobl_maintworktypeid" to="pobl_worktypeid" link-type="outer" alias="workTypeLink">
+                <attribute name="pobl_maintworktypeid" />
+            </link-entity>
+            <link-entity name="sla" from="slaid" to="pobl_slaid" link-type="outer" alias="slaLink">
+                <attribute name="slaid" />
+            </link-entity>
+            <link-entity name="pobl_vatcode" from="pobl_vatcodeid" to="pobl_vatcodeid" link-type="outer" alias="vatLink">
+                <attribute name="pobl_vatcodeid" />
+            </link-entity>
+            <link-entity name="entitlement" from="entitlementid" to="pobl_contractid" link-type="outer" alias="contractLink">
+                <attribute name="entitlementid" />
+            </link-entity>
+            <link-entity name="pobl_costcentre" from="pobl_costcentreid" to="pobl_costcentreid" link-type="outer" alias="costCentreLink">
+                <attribute name="pobl_costcentreid" />
+            </link-entity>
+            <link-entity name="pobl_chartofactivities" from="pobl_chartofactivitiesid" to="pobl_activitycodeid" link-type="outer" alias="activityCodeLink">
+                <attribute name="pobl_chartofactivitiesid" />
+            </link-entity>
+        </entity>
+    </fetch>
+    `
+}
+
+const templateJobs = templateId => {
+    return `
+    <fetch>
+        <entity name="pobl_mainttemplatecase" >
+            <attribute name="pobl_name" />
+            <attribute name="pobl_jobelement1id" />
+            <attribute name="pobl_jobelement1qty" />
+            <attribute name="pobl_jobelement2id" />
+            <attribute name="pobl_jobelement2qty" />
+            <attribute name="pobl_jobelement3id" />
+            <attribute name="pobl_jobelement3qty" />
+            <attribute name="pobl_jobelement4id" />
+            <attribute name="pobl_jobelement4qty" />
+            <attribute name="pobl_jobelement5id" />
+            <attribute name="pobl_jobelement5qty" />
+            <attribute name="pobl_jobelement6id" />
+            <attribute name="pobl_jobelement6qty" />
+            <attribute name="pobl_jobelement7id" />
+            <attribute name="pobl_jobelement7qty" />
+            <attribute name="pobl_jobelement8id" />
+            <attribute name="pobl_jobelement8qty" />
+            <attribute name="pobl_jobelement9id" />
+            <attribute name="pobl_jobelement9qty" />
+            <attribute name="pobl_jobelement10id" />
+            <attribute name="pobl_jobelement10qty" />
+            <filter>
+            <condition attribute="pobl_mainttemplatecaseid" operator="eq" value="${templateId}" />
+            </filter>
+            <link-entity name="product" from="productid" to="pobl_jobelement1id" link-type="outer" alias="jobelement1Link" >
+            <attribute name="productid" />
+            <attribute name="name" />
+            </link-entity>
+            <link-entity name="product" from="productid" to="pobl_jobelement2id" link-type="outer" alias="jobelement2Link" >
+            <attribute name="productid" />
+            <attribute name="name" />
+            </link-entity>
+            <link-entity name="product" from="productid" to="pobl_jobelement3id" link-type="outer" alias="jobelement3Link" >
+            <attribute name="productid" />
+            </link-entity>
+            <link-entity name="product" from="productid" to="pobl_jobelement4id" link-type="outer" alias="jobelement4Link" >
+            <attribute name="productid" />
+            </link-entity>
+            <link-entity name="product" from="productid" to="pobl_jobelement5id" link-type="outer" alias="jobelement5Link" >
+            <attribute name="productid" />
+            </link-entity>
+            <link-entity name="product" from="productid" to="pobl_jobelement6id" link-type="outer" alias="jobelement6Link" >
+            <attribute name="productid" />
+            </link-entity>
+            <link-entity name="product" from="productid" to="pobl_jobelement7id" link-type="outer" alias="jobelement7Link" >
+            <attribute name="productid" />
+            </link-entity>
+            <link-entity name="product" from="productid" to="pobl_jobelement8id" link-type="outer" alias="jobelement8Link" >
+            <attribute name="productid" />
+            </link-entity>
+            <link-entity name="product" from="productid" to="pobl_jobelement9id" link-type="outer" alias="jobelement9Link" >
+            <attribute name="productid" />
+            </link-entity>
+            <link-entity name="product" from="productid" to="pobl_jobelement10id" link-type="outer" alias="jobelement10Link" >
+            <attribute name="productid" />
+            </link-entity>
+        </entity>
+    </fetch>
+    `
+}
+
+const propertyCode = propertyId => {
+    return `
+    <fetch version="1.0" output-format="xml-platform" mapping="logical" distinct="false">
+    <entity name="pobl_property">
+        <attribute name="pobl_propertyname" />
+        <attribute name="pobl_propertyid" />
+        <order attribute="pobl_propertyreference" descending="false" />
+        <filter type="and">
+        <condition attribute="pobl_propertyid" operator="eq" uitype="pobl_property" value="${propertyId}" />
+        </filter>
+        <link-entity name="pobl_propertyscheme" from="pobl_propertyschemeid" to="pobl_propertyschemeid" link-type="inner" alias="schemeLink">
+        <attribute name="pobl_financecode" />
+        </link-entity>
+    </entity>
+    </fetch>
+    `
+}
+
+const projectCode = financeCode => {
+    return `
+    <fetch version="1.0" output-format="xml-platform" mapping="logical" distinct="false">
+    <entity name="pobl_chartofcodes">
+        <attribute name="pobl_chartofcodesid" />
+        <attribute name="pobl_name" />
+        <attribute name="createdon" />
+        <order attribute="pobl_name" descending="false" />
+        <filter type="and">
+        <condition attribute="pobl_chartcode" operator="eq" value="${financeCode}" />
+        </filter>
+    </entity>
+    </fetch>
+    `
+}
+
+const contractorInfo = contractId => {
+    return `
+    <fetch version="1.0" output-format="xml-platform" mapping="logical" distinct="false">
+    <entity name="entitlement">
+        <attribute name="name" />
+        <attribute name="createdon" />
+        <attribute name="entitytype" />
+        <attribute name="entitlementid" />
+        <attribute name="pobl_supplier" />
+        <attribute name="pobl_defaultpricelistid" />
+        <attribute name="pobl_contractinterfacetype" />
+        <order attribute="name" descending="false" />
+        <filter type="and">
+        <condition attribute="entitlementid" operator="eq" uitype="entitlement" value="${contractId}" />
+        </filter>
+        <link-entity name="competitor" from="competitorid" to="pobl_supplier" link-type="inner" alias="supplierLink">
+        <attribute name="competitorid" />
+        </link-entity>
+        <link-entity name="pricelevel" from="pricelevelid" to="pobl_defaultpricelistid" link-type="inner" alias="priceListLink">
+        <attribute name="pricelevelid" />
+        </link-entity>
+    </entity>
+    </fetch>
+    `
+}
+
+const flowSettings = name => {
+    return `
+    <fetch>
+    <entity name="pobl_settingsregister" >
+        <attribute name="pobl_attr1" />
+        <attribute name="pobl_group" />
+        <attribute name="pobl_name" />
+        <filter>
+        <condition attribute="pobl_group" operator="eq" value="Flow HTTP URL" />
+        <condition attribute="pobl_name" operator="like" value="%${name}%" />
+        </filter>
+    </entity>
+    </fetch>
+    `
+}
+
+const maintJobSingle = id => {
+    return `
+    <fetch>
+    <entity name="salesorder" >
+        <attribute name="pobl_maintenanceworktypeid" />
+        <attribute name="ordernumber" />
+        <attribute name="customerid" />
+        <attribute name="pobl_maintenancecaseid" />
+        <attribute name="description" />
+        <attribute name="pobl_propertyid" />
+        <attribute name="pobl_contract" />
+        <attribute name="pobl_costcentre" />
+        <attribute name="pobl_accessdetails" />
+        <attribute name="pobl_activitycode" />
+        <attribute name="pobl_projectcodeid" />
+        <attribute name="pobl_supplier" />
+        <attribute name="pricelevelid" />
+        <filter>
+        <condition attribute="salesorderid" operator="eq" value="${id}" />
+        </filter>
+        <link-entity name="pobl_property" from="pobl_propertyid" to="pobl_propertyid" link-type="outer" alias="propertyLink">
+        <attribute name="pobl_propertyid" />
+        </link-entity>
+    </entity>
+    </fetch>
+    `
+}
+
+const appointmentOutcome = value => {
+    return `
+    <fetch>
+    <entity name="pobl_maintjobappointmentoutcome" >
+        <attribute name="pobl_maintjobappointmentoutcomeid" />
+        <attribute name="pobl_name" />
+        <filter>
+        <condition attribute="pobl_name" operator="eq" value="${value}" />
+        </filter>
+    </entity>
+    </fetch>
+    `
+}
+
 
 module.exports = { 
     occupiersAdditional, 
@@ -154,5 +383,13 @@ module.exports = {
     propertyCertificates,
     periodTransactions,
     adhocCharges,
-    recurringCharges
+    recurringCharges,
+    maintenanceTemplates,
+    templateJobs,
+    propertyCode,
+    projectCode,
+    contractorInfo,
+    flowSettings,
+    maintJobSingle,
+    appointmentOutcome,
 }
