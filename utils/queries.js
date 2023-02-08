@@ -375,6 +375,25 @@ const appointmentOutcome = value => {
     `
 }
 
+const checkExistingContact = obj => {
+    const { firstname, lastname, dob, nationalInsurance } = obj
+
+    return `
+    <fetch>
+        <entity name="contact" >
+            <attribute name="contactid" />
+            <attribute name="pobl_accountid" />
+            <filter type="and" >
+            <condition attribute="firstname" operator="eq" value="${firstname}" />
+            <condition attribute="lastname" operator="eq" value="${lastname}" />
+            <condition attribute="pobl_dob" operator="eq" value="${dob}" />
+            <condition attribute="pobl_nationalinsurance" operator="eq" value="${nationalInsurance}" />
+            </filter>
+        </entity>
+    </fetch>
+    `
+}
+
 
 module.exports = { 
     occupiersAdditional, 
@@ -392,4 +411,5 @@ module.exports = {
     flowSettings,
     maintJobSingle,
     appointmentOutcome,
+    checkExistingContact,
 }

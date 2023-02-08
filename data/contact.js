@@ -1,4 +1,5 @@
-const axios = require('axios')
+const axios = require('axios');
+const { checkExistingContact } = require('../utils/queries');
 
 const GetAllContacts = async (token) => {
     let contacts = null;
@@ -144,9 +145,36 @@ const CreateContactPreference = async (token, newPreference, contactId) => {
     return created
 }
 
+const FindContact = async (token, obj) => {
+    let data = null;
+    let fetchxml = checkExistingContact(obj)
+    let encoded = encodeURI(fetchxml)
+
+    var config = {
+        method: "get",
+        url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/contacts?fetchXml=${encoded}`,
+        headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        },
+    };
+
+    await axios(config)
+        .then(function (response) {
+            data = response.data.value
+        })
+        .catch(function (error) {
+            console.log(error.response.status);
+        });
+
+    return data;
+}
+
 module.exports = {
     GetAllContacts,
     GetContactByID, 
     UpdateContact,
-    CreateContactPreference
+    CreateContactPreference,
+    FindContact
 }

@@ -88,7 +88,8 @@ const CreateUser = async (token, newUser) => {
         pobl_email: newUser.email,
         pobl_username: newUser.username,
         pobl_password: pwd,
-        pobl_currentoccupier: true
+        "pobl_Contact@odata.bind": "/contacts(" + newUser.contactId + ")",
+        "pobl_Account@odata.bind": "/accounts(" + newUser.accountId + ")"
     };
 
     var config = {

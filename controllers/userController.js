@@ -1,3 +1,4 @@
+const { FindContact } = require("../data/contact")
 const { GetUsers, GetSingleUser, CreateUser, GetUserByEmail, matchPassword } = require("../data/users")
 const { GetDynamicsToken } = require("../utils/dynamicsAuth")
 const generateToken = require("../utils/generateToken")
@@ -16,7 +17,7 @@ const authUser = async (req, res) => {
                 username: user[0].pobl_username,
                 email: user[0].pobl_email,
                 fullname: user[0].pobl_name,
-                contactId: null,
+                contactId: user[0].pobl_contact,
                 token: generateToken(user[0].id)
             }
         })
@@ -27,25 +28,33 @@ const authUser = async (req, res) => {
 
 const createUser = async (req, res) => {
     const { access_token } = await GetDynamicsToken()
-    const { firstname, lastname, email, username, password, currentOccupier } = req.body
+    const { firstname, lastname, email, username, password, currentOccupier, dob, nationalInsurance } = req.body
 
-    //TODO: Find if user already exists
+    // Find if user already exists
     const currentUser = await GetUserByEmail(access_token, email)
     if (currentUser.length > 0) {
         return res.status(400).json({ error: "User already exists with this email address" });
     }
-    /*
-        TODO: Create User 
-        TODO: Pobl Tenant - Need to add in the data checks to see if we can match them to an existing contact
-        TODO: Non tenant - Can add them into the system creating a new user but as an basic user
-    */
+
+    // Find Existing Contact Record
+    const contact = await FindContact(access_token, req.body)
+
+    // Check if more than one contact is returned
+    if(contact.length > 1)
+        return res.status(400).json({ error: 'Too many contacts found with the same details. Please get in touch.' })
+
+    // Check if any contact records are returned
+    if(contact.length == 0)
+        return res.status(404).json({ error: 'No contact found matching your details. Please get in touch.' })
+    
     const user = await CreateUser(access_token, { 
         firstname,
         lastname,
         email,
         username,
         password,
-        currentOccupier
+        contactId: contact[0].contactid,
+        accountId: contact[0]._pobl_accountid_value
     })
 
     if (user) {
