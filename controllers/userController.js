@@ -17,7 +17,8 @@ const authUser = async (req, res) => {
                 username: user[0].pobl_username,
                 email: user[0].pobl_email,
                 fullname: user[0].pobl_name,
-                contactId: user[0].pobl_contact,
+                contactId: user[0]._pobl_contact_value,
+                accountId: user[0]._pobl_account_value,
                 token: generateToken(user[0].id)
             }
         })

@@ -1,26 +1,14 @@
 const axios = require('axios');
-const { occupiersResponsible, occupiersAdditional } = require('../utils/queries');
+const { occupiersResponsible, occupiersAdditional, singleOccupancy, getAccountOccupancies } = require('../utils/queries');
 
 const GetTenantOccupancies = async (token, accountId) => {
     let data = []
-    const fields = [
-        'pobl_occupancycontractid',
-        'pobl_name',
-        'pobl_occupancycontractreference',
-        'pobl_occupantcontractstartdate',
-        'pobl_occupantcontractenddate',
-        'pobl_contractbalance',
-        '_pobl_debitfrequencyid_value',
-        'pobl_nextdebitcycledate',
-        '_pobl_accountid_value',
-        'statecode',
-        '_pobl_propertyreferenceid_value',
-        'pobl_occupancycontracttype'
-    ]
+    let fetchxml = getAccountOccupancies(accountId)
+    let encoded = encodeURI(fetchxml)
 
     var config = {
         method: "get",
-        url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_occupancycontracts?$select=${fields.join(',')}&$filter=_pobl_accountid_value eq '${accountId}' and statecode eq 0`,
+        url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_occupancycontracts?fetchXml=${encoded}`,
         headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -41,24 +29,12 @@ const GetTenantOccupancies = async (token, accountId) => {
 
 const GetSingleOccupancy = async (token, occupancyId) => {
     let data = []
-    const fields = [
-        'pobl_occupancycontractid',
-        'pobl_name',
-        'pobl_occupancycontractreference',
-        'pobl_occupantcontractstartdate',
-        'pobl_occupantcontractenddate',
-        'pobl_contractbalance',
-        '_pobl_debitfrequencyid_value',
-        'pobl_nextdebitcycledate',
-        '_pobl_accountid_value',
-        'statecode',
-        '_pobl_propertyreferenceid_value',
-        'pobl_occupancycontracttype'
-    ]
+    let fetchxml = singleOccupancy(occupancyId)
+    let encoded = encodeURI(fetchxml)
 
     var config = {
         method: "get",
-        url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_occupancycontracts(${occupancyId})?$select=${fields.join(',')}`,
+        url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_occupancycontracts?fetchXml=${encoded}`,
         headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -68,7 +44,7 @@ const GetSingleOccupancy = async (token, occupancyId) => {
 
     await axios(config)
         .then(function (response) {
-            data = response.data
+            data = response.data.value[0]
         })
         .catch(function (error) {
             console.log(error);

@@ -52,7 +52,7 @@ const GetSingleUser = async (token, id) => {
 }
 
 const GetUserByEmail = async (token, email) => {
-    const fields = ['pobl_portaluserid','pobl_name','pobl_email', 'pobl_username', 'pobl_password']
+    const fields = ['pobl_portaluserid','pobl_name','pobl_email', 'pobl_username', 'pobl_password', '_pobl_contact_value', '_pobl_account_value']
     let data = []
 
     var config = {

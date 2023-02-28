@@ -1,3 +1,51 @@
+const getAccountOccupancies = accountId => {
+    return `
+    <fetch>
+        <entity name="pobl_occupancycontract" >
+            <attribute name="pobl_occupancycontractreference" />
+            <attribute name="pobl_occupancycontractid" />
+            <attribute name="pobl_name" />
+            <attribute name="pobl_occupantcontractstartdate" />
+            <attribute name="statecodename" />
+            <attribute name="pobl_occupantcontractenddate" />
+            <filter>
+            <condition attribute="statecode" operator="eq" value="0" />
+            </filter>
+            <filter>
+            <condition attribute="pobl_accountid" operator="eq" value="${accountId}" />
+            </filter>
+            <link-entity name="pobl_property" from="pobl_propertyid" to="pobl_propertyreferenceid" link-type="inner" alias="prop" >
+            <attribute name="pobl_addressconcat" />
+            </link-entity>
+        </entity>
+    </fetch>
+    `
+}
+
+const singleOccupancy = occupancyId => {
+    return `<fetch>
+        <entity name="pobl_occupancycontract" >
+        <attribute name="pobl_occupancycontractid" />
+        <attribute name="pobl_name" />
+        <attribute name="pobl_occupancycontractreference" />
+        <attribute name="pobl_occupantcontractstartdate" />
+        <attribute name="pobl_occupancycontracttype" />
+        <attribute name="pobl_contractbalance" />
+        <attribute name="pobl_nextdebitcycledate" />
+        <attribute name="pobl_occupantcontractenddate" />
+        <attribute name="pobl_propertyreferenceid" />
+        <filter>
+            <condition attribute="pobl_occupancycontractid" operator="eq" value="${occupancyId}" />
+        </filter>
+        <link-entity name="pobl_property" from="pobl_propertyid" to="pobl_propertyreferenceid" link-type="inner" alias="property" >
+            <attribute name="pobl_addressconcat" />
+            <attribute name="pobl_accommodationtype" />
+        </link-entity>
+        </entity>
+    </fetch>
+    `
+}
+
 const occupiersResponsible = occupancyId => {
     return `<fetch distinct="true" >
         <entity name="contact" >
@@ -396,6 +444,7 @@ const checkExistingContact = obj => {
 
 
 module.exports = { 
+    singleOccupancy,
     occupiersAdditional, 
     occupiersResponsible,
     propertyHazards,
@@ -412,4 +461,5 @@ module.exports = {
     maintJobSingle,
     appointmentOutcome,
     checkExistingContact,
+    getAccountOccupancies
 }

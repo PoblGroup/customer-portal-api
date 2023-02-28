@@ -1,4 +1,4 @@
-const { GetSingleProperty } = require("../data/property")
+const { GetSingleProperty, GetPropertyCompliance } = require("../data/property")
 const { GetDynamicsToken } = require("../utils/dynamicsAuth")
 
 const getProperties = async (req, res) => {
@@ -35,6 +35,24 @@ const removeProperty = async (req, res) => {
     res.send('Remove Property')
 }
 
+const getPropertyCompliance = async (req, res) => {
+    const { id } = req.params
+    const { access_token } = await GetDynamicsToken()
+
+    try {
+        let compliance = await GetPropertyCompliance(access_token, id)
+
+        if(compliance) {
+            res.status(200).json(compliance)
+        } else {
+            res.status(404).json({ error: 'No Compliance Information Found' })
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: 'Something went wrong' })
+    }    
+}
+
 
 module.exports = {
     getProperties,
@@ -42,4 +60,5 @@ module.exports = {
     updateProperty,
     newProperty,
     removeProperty,
+    getPropertyCompliance
 }

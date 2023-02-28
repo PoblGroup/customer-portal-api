@@ -26,11 +26,32 @@ const GetAllContacts = async (token) => {
 } 
 
 const GetContactByID = async (token, id) => {
+    const fields = [
+        'salutation',
+        'firstname',
+        'lastname',
+        'pobl_dob',
+        'emailaddress1',
+        'emailaddress2',
+        'address1_telephone1',
+        'address1_telephone2',
+        'pobl_nationalinsurance',
+        'gendercode',
+        'pobl_sexualorientation',
+        'familystatuscode',
+        'pobl_ethnicorigin',
+        'pobl_economicstatus',
+        'pobl_language',
+        'pobl_email1type',
+        'pobl_email2type',
+        'pobl_telephone1type',
+        'pobl_telephone2type'
+    ]
     let contact = null;
 
     var config = {
         method: "get",
-        url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/contacts(${id})`,
+        url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/contacts(${id})?$select=${fields.join(',')}`,
         headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -39,7 +60,7 @@ const GetContactByID = async (token, id) => {
     };
 
     await axios(config)
-        .then(function (response) {
+        .then(function (response) { 
         //   console.log(JSON.stringify(response.data));
             contact = JSON.stringify(response.data);
         })
@@ -55,6 +76,7 @@ const UpdateContact = async (token, newContactDetails) => {
 
     var data = {
         salutation: newContactDetails.title,
+        pobl_contactinitial: newContactDetails.contactInitial,
         pobl_dob: newContactDetails.dob,
         address1_telephone1: newContactDetails.tel1,
         pobl_telephone1type: newContactDetails.tel1Type,
@@ -74,8 +96,8 @@ const UpdateContact = async (token, newContactDetails) => {
     if(newContactDetails.gender != "") 
         data.gendercode = newContactDetails.gender
 
-    if(newContactDetails.martialStatus != "") 
-        data.familystatuscode = newContactDetails.martialStatus
+    if(newContactDetails.maritalStatus != "") 
+        data.familystatuscode = newContactDetails.maritalStatus
 
     if(newContactDetails.ethnicOrigin != "") 
         data.pobl_ethnicorigin = newContactDetails.ethnicOrigin
@@ -88,6 +110,9 @@ const UpdateContact = async (token, newContactDetails) => {
     
     if(newContactDetails.language != "") 
         data.pobl_language = newContactDetails.language
+    
+    if(newContactDetails.preferredContact != "")
+        data.preferredcontactmethodcode = newContactDetails.preferredContact
 
     var config = {
         method: "patch",
@@ -116,10 +141,11 @@ const CreateContactPreference = async (token, newPreference, contactId) => {
     let created = false
 
     var data = {
-        pobl_communicationschannel: newPreference.channel,
+        pobl_communicationschannel: newPreference.channels.join(',').toString(),
         pobl_preference: newPreference.preference,
         pobl_effectivedate: newPreference.effectiveDate,
-        "pobl_Contact@odata.bind": "/contacts(" + contactId + ")" 
+        "pobl_Contact@odata.bind": "/contacts(" + contactId + ")" ,
+        pobl_source: "771570000"
     };
 
     var config = {
@@ -144,6 +170,39 @@ const CreateContactPreference = async (token, newPreference, contactId) => {
 
     return created
 }
+
+const GetContactPreferences = async (token, id) => {
+    const fields = [
+        'pobl_contactpreferenceemail',
+        'pobl_contactpreferencephone',
+        'pobl_contactpreferencepostal',
+        'pobl_contactpreferencesms',
+        'pobl_contactpreferencesurvey',
+        'preferredcontactmethodcode'
+    ]
+    let prefs = null;
+
+    var config = {
+        method: "get",
+        url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/contacts(${id})?$select=${fields.join(',')}`,
+        headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        },
+    };
+
+    await axios(config)
+        .then(function (response) { 
+        //   console.log(JSON.stringify(response.data));
+            prefs = JSON.stringify(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+
+    return JSON.parse(prefs);
+} 
 
 const FindContact = async (token, obj) => {
     let data = null;
@@ -176,5 +235,6 @@ module.exports = {
     GetContactByID, 
     UpdateContact,
     CreateContactPreference,
-    FindContact
+    FindContact,
+    GetContactPreferences
 }
